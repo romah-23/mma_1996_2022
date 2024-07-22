@@ -7,11 +7,6 @@ library(openxlsx)  # Pacote para abrir arquivos de excel
 library(prais)     # Pacote para análise de regressão de prais-winsten
 library(readxl)    # Pacote para importar arquivos de excel 
 
-# Download do banco de dados 1 de teste e carregamento do arquivo
-download.file("https://raw.githubusercontent.com/kleydmann/Timeseriestutorial/main/Casos_anuais_AP_2003-2022.csv",
-              "Casos_anuais_AP_2003-2022.csv", method = "auto")
-df = read.csv2("Casos_anuais_AP_2003-2022.csv")
-
 ================================================================================
 # 1. Análise regional (norte, nordeste, sudeste, sul, centro-oeste e Brasil)
 
