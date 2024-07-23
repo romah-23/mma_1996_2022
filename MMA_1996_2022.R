@@ -126,23 +126,24 @@ data.frame( VPA_brasil = c("Variação Percentual Anual (VPA)", VPA_brasil),
             IC95_inf_brasil = c("IC95% Inferior", IC95_inf_brasil),
             IC95_sup_brasil = c("IC95% Superior", IC95_sup_brasil))
 
-# Inlcluindo Função para calcular R²
+# Função para cálculo R²
 calculate_r_squared <- function(observed, predicted) {
   valid_indices <- !is.na(observed) & !is.na(predicted)
   observed <- observed[valid_indices]
   predicted <- predicted[valid_indices]
+  
   if(length(observed) < 2) {
     return(NA)
   }
   
-# Calculando Soma dos Quadrados Totais (SST)
+  # Calculando Soma dos Quadrados Totais (SST)
   mean_observed <- mean(observed)
   SST <- sum((observed - mean_observed)^2)
   
-# Calculando Soma dos Quadrados dos Erros (SSE))
+  # Calculando Soma dos Quadrados dos Erros (SSE)
   SSE <- sum((observed - predicted)^2)
   
-# Calculando R²
+  # Calculando R²
   R_squared <- 1 - (SSE / SST)
   
   return(R_squared)
@@ -157,6 +158,7 @@ R2_reg <- data.frame(
   R2_centroeste = calculate_r_squared(df$centroeste, df$Predito_centroeste),
   R2_brasil = calculate_r_squared(df$brasil, df$Predito_brasil)
 )
+
 print(results_r2)
 
 ================================================================================
@@ -206,6 +208,8 @@ beta_f4 <- coef(summary(pw_f4))["ano", "Estimate"]
 beta_f5 <- coef(summary(pw_f5))["ano", "Estimate"]
 beta_brasil_id <- coef(summary(pw_brasil_id))["ano", "Estimate"]
 
+print(beta_f3)
+
 ErroPadrao_f1 <- coef(summary(pw_f1))["ano", "Std. Error"]
 ErroPadrao_f2 <- coef(summary(pw_f2))["ano", "Std. Error"]
 ErroPadrao_f3 <- coef(summary(pw_f3))["ano", "Std. Error"]
@@ -230,6 +234,20 @@ VPA_total_f3 <- round((-1 + 10^(beta_f3))*100, 2)
 VPA_total_f4 <- round((-1 + 10^(beta_f4))*100, 2)
 VPA_total_f5 <- round((-1 + 10^(beta_f5))*100, 2)
 VPA_total_brasil_id <- round((-1 + 10^(beta_brasil_id))*100, 2)
+
+print(beta_f2)
+
+# Aplicadando função R² em cada faixa etária
+R2_idade <- data.frame(
+  R2_f1 = calculate_r_squared(df_idade$f1, df_idade$Predito_f1),
+  R2_f2 = calculate_r_squared(df_idade$f2, df_idade$Predito_f2),
+  R2_f3 = calculate_r_squared(df_idade$f3, df_idade$Predito_f3),
+  R2_f4 = calculate_r_squared(df_idade$f4, df_idade$Predito_f4),
+  R2_f5 = calculate_r_squared(df_idade$f5, df_idade$Predito_f5),
+  R2_brasil_id = calculate_r_squared(df_idade$brasil_ed, df_idade$Predito_brasil_id)
+)
+
+print(results_R2_idade)
 
 ================================================================================
 # 3. Análise estado civil (solteiro, casado, viuvo, separado e Brasil)
@@ -273,6 +291,8 @@ beta_viuvo <- coef(summary(pw_viuvo))["ano", "Estimate"]
 beta_separado <- coef(summary(pw_separado))["ano", "Estimate"]
 beta_brasil_ec <- coef(summary(pw_brasil_ec))["ano", "Estimate"]
 
+print(beta_viuvo)
+
 ErroPadrao_solteiro <- coef(summary(pw_solteiro))["ano", "Std. Error"]
 ErroPadrao_casado <- coef(summary(pw_casado))["ano", "Std. Error"]
 ErroPadrao_viuvo <- coef(summary(pw_viuvo))["ano", "Std. Error"]
@@ -294,6 +314,17 @@ VPA_total_casado <- round((-1 + 10^(beta_casado))*100, 2)
 VPA_total_viuvo <- round((-1 + 10^(beta_viuvo))*100, 2)
 VPA_total_separado <- round((-1 + 10^(beta_separado))*100, 2)
 VPA_total_brasil_ec <- round((-1 + 10^(beta_brasil_ec))*100, 2)
+
+# Aplicadando função R² em cada estado civil
+R2_ec <- data.frame(
+  R2_solteiro = calculate_r_squared(df_ec$solteiro, df_ec$Predito_solteiro),
+  R2_casado = calculate_r_squared(df_ec$casado, df_ec$Predito_casado),
+  R2_viuvo = calculate_r_squared(df_ec$viuvo, df_ec$Predito_viuvo), # Corrigido de 'casado' para 'viuvo'
+  R2_separado = calculate_r_squared(df_ec$separado, df_ec$Predito_separado),
+  R2_brasil_ec = calculate_r_squared(df_ec$brasil_ec, df_ec$Predito_brasil_ec)
+)
+
+print(R2_ec)
 
 ================================================================================
 # 4. Análise cor/raça (branca, preta, amarela, parda, indígena e Brasil)
@@ -366,6 +397,18 @@ VPA_total_parda <- round((-1 + 10^(beta_parda))*100, 2)
 VPA_total_indigena <- round((-1 + 10^(beta_indigena))*100, 2)
 VPA_total_brasil_cor <- round((-1 + 10^(beta_brasil_cor))*100, 2)
 
+# Aplicadando função R² em cada estado civil
+R2_cor <- data.frame(
+  R2_branca = calculate_r_squared(df_cor$branca, df_cor$Predito_branca),
+  R2_preta = calculate_r_squared(df_cor$preta, df_cor$Predito_preta),
+  R2_amarela = calculate_r_squared(df_cor$amarela, df_cor$Predito_amarela),
+  R2_parda = calculate_r_squared(df_cor$parda, df_cor$Predito_parda),
+  R2_indigena = calculate_r_squared(df_cor$indigena, df_cor$Predito_indigena),
+  R2_brasil_cor = calculate_r_squared(df_cor$brasil_cor, df_cor$Predito_brasil_cor)
+)
+
+print(R2_cor)
+
 ================================================================================
 # 5. Análise escolaridade [e1(1-3), e2(4-7), e3(8-11), e4(12 ou mais), nenhuma e
 # Brasil]
@@ -413,6 +456,8 @@ beta_e4 <- coef(summary(pw_e4))["ano", "Estimate"]
 beta_nenhuma <- coef(summary(pw_nenhuma))["ano", "Estimate"]
 beta_brasil_esc <- coef(summary(pw_brasil_esc))["ano", "Estimate"]
 
+print(beta_nenhuma)
+
 ErroPadrao_e1 <- coef(summary(pw_e1))["ano", "Std. Error"]
 ErroPadrao_e2 <- coef(summary(pw_e2))["ano", "Std. Error"]
 ErroPadrao_e3 <- coef(summary(pw_e3))["ano", "Std. Error"]
@@ -438,13 +483,76 @@ VPA_total_e4 <- round((-1 + 10^(beta_e4))*100, 2)
 VPA_total_nenhuma <- round((-1 + 10^(beta_nenhuma))*100, 2)
 VPA_total_brasil_esc <- round((-1 + 10^(beta_brasil_esc))*100, 2)
 
+print(VPA_total_brasil_esc)
+
+# Aplicadando função R² em cada escolaridade
+R2_esc <- data.frame(
+  R2_e1 = calculate_r_squared(df_esc$e1, df_esc$Predito_e1),
+  R2_e2 = calculate_r_squared(df_esc$e2, df_esc$Predito_e2),
+  R2_e3 = calculate_r_squared(df_esc$e3, df_esc$Predito_e3),
+  R2_e4 = calculate_r_squared(df_esc$e4, df_esc$Predito_e4),
+  R2_nenhuma = calculate_r_squared(df_esc$nenhuma, df_esc$Predito_nenhuma),
+  R2_brasil_esc = calculate_r_squared(df_esc$brasil_esc, df_esc$Predito_brasil_esc)
+  )
+
+print(R2_esc)
+
 ================================================================================
 # 6. Gráfico regional
   
 # Carregando pacotes necessários
 library(ggplot2)     # Pacote para manuseio de dados de df
+library(scales)
 
+## Dados transformados
+df_long <- df %>%
+  pivot_longer(cols = c(norte, nordeste, sudeste, sul, centroeste, brasil,
+                        Predito_norte, Predito_nordeste, Predito_sudeste, Predito_sul, Predito_centroeste, Predito_brasil),
+               names_to = "tipo",
+               values_to = "valor") %>%
+  mutate(tipo = factor(tipo, levels = c("norte", "nordeste", "sudeste", "sul", "centroeste", "brasil",
+                                        "Predito_norte", "Predito_nordeste", "Predito_sudeste", "Predito_sul", "Predito_centroeste", "Predito_brasil"),
+                       labels = c("Norte - Observado", "Nordeste - Observado", "Sudeste - Observado", "Sul - Observado", "Centro-Oeste - Observado", "Brasil - Observado",
+                                  "Norte - Predito", "Nordeste - Predito", "Sudeste - Predito", "Sul - Predito", "Centro-Oeste - Predito", "Brasil - Predito")))
 
+# Filtrando os dados para exibir apenas observados e o predito do Brasil
+df_long_filtrado <- df_long %>%
+  filter(grepl("Observado", tipo) | tipo == "Brasil - Predito")
 
+# Definindo as cores e estilos
+cores <- c("Norte - Observado" = "#5B9BD5",
+           "Nordeste - Observado" = "#A5A5A5",
+           "Sudeste - Observado" = "#4472C4",
+           "Sul - Observado" = "#255E91",
+           "Centro-Oeste - Observado" = "#636363",
+           "Brasil - Observado" = "#000000",
+           "Brasil - Predito" = "#000000")
 
+estilos <- c("Norte - Observado" = "solid",
+             "Nordeste - Observado" = "solid",
+             "Sudeste - Observado" = "solid",
+             "Sul - Observado" = "solid",
+             "Centro-Oeste - Observado" = "solid",
+             "Brasil - Observado" = "solid",
+             "Brasil - Predito" = "dashed")
 
+# Criar o gráfico com personalização
+grafico_regional <- ggplot(df_long_filtrado, aes(x = ano, y = valor, color = tipo, linetype = tipo)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  scale_color_manual(values = cores) +
+  scale_linetype_manual(values = estilos) +
+  labs(x = "Ano",
+       y = "Taxas por milhão",
+       color = "Legenda") +    # Apenas a legenda de cor será exibida
+  guides(linetype = "none") + # Remove a legenda de linetype
+  scale_x_continuous(breaks = seq(1996, 2022, by = 2)) + # Define os intervalos dos anos no eixo x
+  scale_y_continuous(labels = label_number(accuracy = 0.01)) +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "white"),  # Fundo do gráfico
+    plot.background = element_rect(fill = "white"),   # Fundo do gráfico inteiro
+    legend.background = element_rect(fill = "white")  # Fundo da legenda
+
+print(grafico_regional)
+================================================================================
